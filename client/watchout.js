@@ -11,7 +11,7 @@ var dataset = [];
 
 
 function randomPos(dataset) {
-  for(var i =0; i < 3; i++ ) {
+  for(var i =0; i < 50; i++ ) {
     dataset[i] = [Math.random()*500, Math.random()*500];
   }   
   return dataset;
@@ -21,7 +21,7 @@ function randomPos(dataset) {
 var initialPos = randomPos(dataset);
 
 var enemies = svg.selectAll('enemy')
-                 .data(dataset)
+                 .data(initialPos)
                  .enter()
                  .append("svg:circle")
                  .attr('cx', function(d) {
@@ -59,7 +59,18 @@ var player = svg.selectAll('player')
             .attr('r', 10 + 'px')
             .call(drag);
 
+var collision = function(px,py,ex,ey) {
+  var collisionDist  = 20;
 
+  var distanceBtwnPts = Math.sqrt(Math.pow(px - enemyX , 2)+(Math.pow(py - enemyY , 2)))
+  if (collisionDist > distanceBtwnPts) {
+    // tweeeeeenss...(try to set up tweening by time).
+    
+    return true;
+  }
+
+  return false;
+}
 
 var update = function(){
 
@@ -69,7 +80,6 @@ var update = function(){
   // var enemyX = futurePos[0][0];
   // var enemyY = futurePos[0][1];
   // Math.sqrt(Math.pow(px - enemyX , 2)+(Math.pow(py - enemyY , 2)));
-  var colDistance = 20;
 
   // Enter is only for new data bindings. If data is already 
   // bound to the target, enter is not needed.
@@ -83,9 +93,10 @@ var update = function(){
             return d[0];
           })
           .attr('cy', function (d) {
-            console.log(py-d[1]);
+            //console.log(py-d[1]);
             return d[1];
           })
+
 };
 
 setInterval(update, 1000);                 
