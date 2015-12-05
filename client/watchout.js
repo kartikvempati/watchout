@@ -6,12 +6,12 @@ var svg = d3.select('body').append('svg')
 
 
 /* ENEMY DATA*/
-var score = 0;
+
 var dataset = [];
 
 
 function randomPos(dataset) {
-  for(var i =0; i < 3; i++ ) {
+  for(var i =0; i < 25; i++ ) {
     dataset[i] = [Math.random()*500, Math.random()*500];
   }   
   return dataset;
@@ -19,7 +19,7 @@ function randomPos(dataset) {
 
 
 var initialPos = randomPos(dataset);
-
+var collisionCount = 0;
 var enemies = svg.selectAll('enemy')
                  .data(dataset)
                  .enter()
@@ -39,8 +39,8 @@ var enemies = svg.selectAll('enemy')
 /* PLAYER DATA */
 //Hoisting
 
-var px;
-var py;
+var px = 250;
+var py = 250;
 
 var drag = d3.behavior.drag()
               .on('drag', function(){
@@ -59,33 +59,59 @@ var player = svg.selectAll('player')
             .attr('r', 10 + 'px')
             .call(drag);
 
+function updateScore() {
+  score = score+1;
+  d3.selectAll('#current-score').text(score.toString());
+  d3.selectAll('#collisions').text(collisionCount.toString());
 
+}
+
+function updateHighScore() {
+  var highScore = d3.selectAll('#high-score');
+  if (score > highScore.text()){
+    highScore.text(score.toString());
+  }
+}
+
+var collision = function() {
+
+  var curX = parseFloat(enemies.attr('cx'));
+  var curY = parseFloat(enemies.attr('cy'));
+
+  console.log(curX);
+  return function () {
+    // if(curX !== playerX && curY !== playerY){
+    
+    var distance = Math.sqrt(Math.pow(px - enemies.attr('cx'), 2)+(Math.pow(py- enemies.attr('cy'), 2)));
+    var collisionDist = parseFloat(enemies.attr('r'))+parseFloat(player.attr('r'));
+    // console.log(collisionDist);
+    if (collisionDist >= distance){
+      collisionCount++;
+      console.log('COLLISION');
+      updateScore();
+      updateHighScore();
+      score = 0;
+    }
+  }
+};
+var score = 0;
 
 var update = function(){
-
-  score++;
-  d3.selectAll('.current').text("Current Score: " + score);
   var futurePos = randomPos(dataset);
-  // var enemyX = futurePos[0][0];
-  // var enemyY = futurePos[0][1];
-  // Math.sqrt(Math.pow(px - enemyX , 2)+(Math.pow(py - enemyY , 2)));
-  var colDistance = 20;
 
   // Enter is only for new data bindings. If data is already 
   // bound to the target, enter is not needed.
   enemies.data(futurePos)
           .transition().duration(1000)
+          .tween('custom', collision)
           .attr('cx', function (d) {
-            if(px - d[0] < 20){
-              score = 0;
-            }
-            
             return d[0];
           })
           .attr('cy', function (d) {
-            console.log(py-d[1]);
+            //console.log(py-d[1]);
             return d[1];
           })
+  setInterval(updateScore, 100);
 };
 
 setInterval(update, 1000);                 
