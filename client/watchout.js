@@ -1,14 +1,19 @@
 // start slingin' some d3 here.
 var svg = d3.select('body').append('svg')
    .attr("width", 500)
-   .attr("height", 500)
-   .attr("class", "svg");
-
+   .attr("height", 500);
+  
 
 var dataset = [];
-for(var i =0; i < 50; i++ ) {
-  dataset[i] = [Math.random()*500, Math.random()*500];
-}   
+
+function randomPos(dataset) {
+  for(var i =0; i < 50; i++ ) {
+    dataset[i] = [Math.random()*500, Math.random()*500];
+  }   
+  return dataset;
+}
+
+var initialPos = randomPos(dataset);
 
 var enemies = svg.selectAll('circle')
                  .data(dataset)
@@ -23,7 +28,19 @@ var enemies = svg.selectAll('circle')
                  .attr('r', 10 + 'px')
                  .attr("fill", "yellow")
                  .attr("stroke", "orange")
-                 .attr("stroke-width", function(d) {
-                  return 5;
-                 })
-                 .attr('class', "circle");
+                 .attr("stroke-width", 5);
+            
+
+var update = function(){
+  enemies.data(randomPos(dataset))
+          .transition().duration(500)
+          .attr('cx', function (d) {
+            return d[0];
+          })
+          .attr('cy', function (d) {
+            return d[1];
+          })
+};
+
+setInterval(update, 1000);
+                 
