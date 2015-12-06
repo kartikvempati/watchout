@@ -41,27 +41,27 @@ var enemies = svg.selectAll('enemy')
                  .attr("stroke-width", 5);
 
 
-var move = function() {
-    enemies
-      .transition()
-      .ease('linear')
-      .duration(1000)
-      .attr('cx', function(d) {
-          return d[0] + 'px'
-        })
-      .attr('cy', function(d) {
-          return d[1] + 'px'
-      })
-      .each('end', move);
-  };
-move();
+// var move = function() {
+//     enemies
+//       .transition()
+//       .ease('linear')
+//       .duration(1000)
+//       .attr('cx', function(d) {
+//           return d[0] + 'px'
+//         })
+//       .attr('cy', function(d) {
+//           return d[1] + 'px'
+//       })
+//       .each('end', move);
+//   };
+// move();
 
 /* PLAYER DATA */
 //Hoisting
 
 
 var drag = d3.behavior.drag()
-              .on('drag', function(){
+              .on('drag'git , function(){
                 px = d3.event.x;
                 py = d3.event.y;
                 player.attr('cx', d3.event.x + 'px')
@@ -147,6 +147,7 @@ var update = function(){
          .transition()
          .duration(2000)
          .tween('custom', collision)
+         
 
   // if(collisionBool) {
   //   onCollision();
